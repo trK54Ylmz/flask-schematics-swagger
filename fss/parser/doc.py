@@ -1,5 +1,5 @@
 import inspect
-from typing import Optional
+from typing import List, Optional
 from flask import Flask
 from fss.parser.rule import DocRuleParser
 from fss.schema import DocSchema
@@ -17,10 +17,30 @@ class DocParser:
         self.app = app
         self.rule = rule
 
-    def extract(self):
+    def extract_doc(self) -> str:
+        '''
+        Extract function pydoc definition
+
+        :return: function pydoc
+        '''
         function = self.app.view_functions.get(self.rule.endpoint)
 
         return function.__doc__
+
+    def extract_method(self, methods: List[str]) -> str:
+        '''
+        Extract endpoint HTTP method by given list of methods
+
+        :param methods: list of methods accepted by the endpoint
+        :return: main http method for the endpoint
+        '''
+        if len(methods) > 0:
+            if 'POST' in methods:
+                return 'POST'
+            if 'DELETE' in methods:
+                return 'DELETE'
+
+        return 'GET'
 
     def parse(self) -> Optional[DocSchema]:
         """
@@ -28,21 +48,15 @@ class DocParser:
 
         :return: endpoint schema definition, if exists
         """
-        doc = inspect.cleandoc(self.extract())
+        doc = inspect.cleandoc(self.extract_doc())
 
         lines = doc.splitlines()
         if len(lines) == 0:
             return None
 
-        method = 'GET'
         url = self.rule.rule
         name = self.rule.endpoint
-        methods = self.rule.methods
-        if len(method) > 0:
-            if 'POST' in methods:
-                method = 'POST'
-            if 'DELETE' in methods:
-                method = 'DELETE'
+        method = self.extract_method(self.rule.methods)
 
         schema = DocSchema(name, url, method, doc)
 
