@@ -1,5 +1,4 @@
 import re
-import importlib
 
 from .parser import RuleParser
 from fss.exception import RuleException

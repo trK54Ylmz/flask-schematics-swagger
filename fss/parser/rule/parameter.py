@@ -1,6 +1,5 @@
 import re
 from typing import Any
-from xmlrpc.client import boolean
 
 from .parser import RuleParser
 from fss.exception import ParameterException
@@ -22,9 +21,6 @@ class DocParameterRuleParser(RuleParser):
         :param type: expected default value type
         :return: new default value in given type
         """
-        if type == self.primitives[0]:
-            return value
-
         if type == self.primitives[1]:
             return float(value)
 
@@ -33,6 +29,8 @@ class DocParameterRuleParser(RuleParser):
 
         if type == self.primitives[3]:
             return value in ['true', 'True', '1']
+
+        return value
 
     def parse(self, definition: str) -> DocParameterRuleSchema:
         """

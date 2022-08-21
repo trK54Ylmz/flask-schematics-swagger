@@ -1,5 +1,7 @@
 from typing import List, Optional
-from .schema import DocSchemaGeneator
+
+from fss.parser import DocParser
+from fss.schema import DocSchema
 
 
 class OpenApiGenerator:
@@ -7,15 +9,22 @@ class OpenApiGenerator:
         self,
         host: Optional[str] = None,
         version: Optional[str] = None,
+        base_path: Optional[str] = None,
         route: Optional[str] = None,
     ) -> None:
         self.host = host
         self.version = version
         self.route = route
-        self.schemas: List[DocSchemaGeneator] = []
+        self.base_path = base_path
+        self.schemas: List[DocSchema] = []
 
-    def add(self, schema: DocSchemaGeneator) -> None:
-        schema.generate()
+    def add(self, parser: DocParser) -> None:
+        # parse function document
+        schema = parser.parse()
+        if schema is None:
+            return
+
+        self.schemas.append(schema)
 
     def generate(self) -> None:
         pass

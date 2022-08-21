@@ -5,19 +5,26 @@ from fss.schema.rule.rule import DocRuleSchema
 
 class DocSchema:
     doc: str
-    url: Optional[str] = None
+    url: str
+    method: str
+    name: str
     summary: Optional[str] = None
     description: Optional[str] = None
     parameters: List[DocParameterRuleSchema] = []
     responses: List[DocResponseRuleSchema] = []
 
-    def __init__(self, doc: str) -> None:
+    def __init__(self, name: str, url: str, method: str, doc: str) -> None:
         """
         Create endpoint schema with given function documentation
 
         :param doc: function pydoc
         """
         self.doc = doc
+        self.url = url
+        self.name = name
+        self.method = method
+        self.responses = []
+        self.parameters = []
 
     def add_parameter(self, rule: DocParameterRuleSchema) -> None:
         """

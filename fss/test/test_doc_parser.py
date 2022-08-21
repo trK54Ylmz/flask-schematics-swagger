@@ -1,64 +1,54 @@
+from flask import Flask
 from fss.parser import DocParser
 from fss.schema.rule import DocRuleType
+from test.endpoint import user_single_summary, user_multi_summary
 from test.schema import UserSuccessResponse, UserErrorResponse, UserModel
 
 
 class TestDocParser:
+    def setup_method(self, _):
+        self.app = Flask('test')
+        self.app.testing = True
+
+    def teardown_method(self, _):
+        self.app = None
+
     def test_single_line_summary(self):
-        summary = 'Lorem Ipsum is simply dummy text of the printing'
+        self.app.add_url_rule('/example', view_func=user_single_summary, methods=['GET', 'HEAD'])
 
-        doc = f'''
-        {summary}
-
-        :return: flask response
-        '''
-
-        parser = DocParser(doc)
+        parser = DocParser(self.app, self.app.url_map._rules[1])
         schema = parser.parse()
 
-        assert schema.summary == summary
+        assert schema.summary == 'A'
 
     def test_multi_line_summary(self):
-        summary = 'Lorem Ipsum is simply dummy.\nText of the printing.'
+        self.app.add_url_rule('/example', view_func=user_multi_summary, methods=['GET', 'HEAD'])
 
-        doc = f'''
-        {summary}
-
-        :return: flask response
-        '''
-
-        parser = DocParser(doc)
+        parser = DocParser(self.app, self.app.url_map._rules[1])
         schema = parser.parse()
 
-        assert schema.summary == summary
+        assert schema.summary == 'A\nB'
 
     def test_single_line_description(self):
-        description = 'Lorem Ipsum is simply dummy text of the printing'
+        self.app.add_url_rule('/example', view_func=user_single_summary, methods=['GET', 'HEAD'])
 
-        doc = f'''
-        Example title
-
-        {description}
-
-        :return: flask response
-        '''
-
-        parser = DocParser(doc)
+        parser = DocParser(self.app, self.app.url_map._rules[1])
         schema = parser.parse()
 
-        assert schema.description == description
+        assert schema.description == 'Z'
+
+    def test_multi_line_description(self):
+        self.app.add_url_rule('/example', view_func=user_multi_summary, methods=['GET', 'HEAD'])
+
+        parser = DocParser(self.app, self.app.url_map._rules[1])
+        schema = parser.parse()
+
+        assert schema.description == 'Y\nZ'
 
     def test_simple_response(self):
-        doc = '''
-        Example
+        self.app.add_url_rule('/example', view_func=user_multi_summary, methods=['GET', 'HEAD'])
 
-        Example
-
-        :response 200 test.schema.UserSuccessResponse: successful response
-        :response 403 test.schema.UserErrorResponse: error response
-        '''
-
-        parser = DocParser(doc)
+        parser = DocParser(self.app, self.app.url_map._rules[1])
         schema = parser.parse()
 
         assert schema.responses[0].kind == DocRuleType.RESPONSE
@@ -71,16 +61,9 @@ class TestDocParser:
         assert schema.responses[1].model_name == 'test.schema.UserErrorResponse'
 
     def test_simple_parameter(self):
-        doc = '''
-        Example
+        self.app.add_url_rule('/example', view_func=user_multi_summary, methods=['GET', 'HEAD'])
 
-        Example
-
-        :parameter query integer user_id: the user id filter. default: None
-        :parameter body test.schema.UserModel user: the user model
-        '''
-
-        parser = DocParser(doc)
+        parser = DocParser(self.app, self.app.url_map._rules[1])
         schema = parser.parse()
 
         assert len(schema.parameters) == 2

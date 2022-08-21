@@ -1,4 +1,5 @@
 [config]
+ignore-paths=test/.*
 
 # Ingore defined errors and warnings
 disable=

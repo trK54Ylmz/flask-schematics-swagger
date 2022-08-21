@@ -1,6 +1,7 @@
 from typing import Optional
 from flask import Flask
-from fss.generator import OpenApiGenerator, DocSchemaGeneator
+from fss.parser import DocParser
+from fss.generator import OpenApiGenerator
 
 
 class FlaskSchematicsSwagger:
@@ -31,8 +32,8 @@ class FlaskSchematicsSwagger:
         openapi = OpenApiGenerator(self.host, self.version, self.route)
 
         for item in self.app.url_map.iter_rules():
-            doc = DocSchemaGeneator(self.app, item)
+            parser = DocParser(self.app, item)
 
-            openapi.add(doc)
+            openapi.add(parser)
 
         openapi.generate()

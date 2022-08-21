@@ -1,17 +1,26 @@
 import inspect
 from typing import Optional
+from flask import Flask
 from fss.parser.rule import DocRuleParser
 from fss.schema import DocSchema
+from werkzeug.routing import Rule
 
 
 class DocParser:
-    def __init__(self, doc: str) -> None:
+    def __init__(self, app: Flask, rule: Rule) -> None:
         """
         Parses and generates document schema function definition
 
-        :param doc: function pydoc
+        :param app: flask app
+        :param rule: flask endpoint rule
         """
-        self.doc = doc
+        self.app = app
+        self.rule = rule
+
+    def extract(self):
+        function = self.app.view_functions.get(self.rule.endpoint)
+
+        return function.__doc__
 
     def parse(self) -> Optional[DocSchema]:
         """
@@ -19,13 +28,23 @@ class DocParser:
 
         :return: endpoint schema definition, if exists
         """
-        doc = inspect.cleandoc(self.doc)
+        doc = inspect.cleandoc(self.extract())
 
         lines = doc.splitlines()
         if len(lines) == 0:
             return None
 
-        schema = DocSchema(doc)
+        method = 'GET'
+        url = self.rule.rule
+        name = self.rule.endpoint
+        methods = self.rule.methods
+        if len(method) > 0:
+            if 'POST' in methods:
+                method = 'POST'
+            if 'DELETE' in methods:
+                method = 'DELETE'
+
+        schema = DocSchema(name, url, method, doc)
 
         rule_def = None
         summary = None
