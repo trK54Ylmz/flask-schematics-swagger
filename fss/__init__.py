@@ -1,5 +1,5 @@
-from .extension import SchematicsSwagger
+from .extension import FlaskSchematicsSwagger
 
 __all__ = [
-    'SchematicsSwagger',
+    'FlaskSchematicsSwagger',
 ]

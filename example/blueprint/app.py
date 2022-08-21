@@ -1,6 +1,5 @@
 from flask import Flask
-from fss import SchematicsSwagger
-
+from fss import FlaskSchematicsSwagger
 
 app = Flask('app')
-ss = SchematicsSwagger(app)
+fss = FlaskSchematicsSwagger(app)

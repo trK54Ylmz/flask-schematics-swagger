@@ -3,7 +3,7 @@ from flask import Flask
 from fss.generator import OpenApiGenerator, DocSchemaGeneator
 
 
-class SchematicsSwagger:
+class FlaskSchematicsSwagger:
     def __init__(
         self,
         app: Flask,

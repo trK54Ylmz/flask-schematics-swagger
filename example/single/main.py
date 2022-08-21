@@ -1,21 +1,22 @@
-from flask import Flask
-from fss import SchematicsSwagger
+from flask import Flask, request
+from fss import FlaskSchematicsSwagger
 from schema import UserModel, UserGetResponse
 
-
 app = Flask('app')
-ss = SchematicsSwagger(app)
+fss = FlaskSchematicsSwagger(app)
 
 
 @app.get('/example')
-@ss.doc()
 def get_users() -> dict:
     """
     Get list of users
 
+    :parameter query integer user_id: the user id filter. default: None
     :response 200 schema.UserGetResponse:
     :return: flask response as dictionary
     """
+    user_id = request.args.get('user_id')
+
     items = [
         {'id': 1, 'name': 'Test 1', 'age': 20, 'status': True},
         {'id': 2, 'name': 'Test 2', 'age': 30, 'status': False},
@@ -23,6 +24,8 @@ def get_users() -> dict:
 
     users = []
     for item in items:
+        if user_id is not None and user_id != item['id']:
+            continue
         users.append(UserModel(item))
 
     response = UserGetResponse()
@@ -33,4 +36,5 @@ def get_users() -> dict:
 
 
 if __name__ == '__main__':
+    fss.add_route()
     app.run()
