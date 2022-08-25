@@ -29,3 +29,13 @@ def user_multi_summary() -> Response:
     :return: flask.Response
     """
     return make_response('test')
+
+
+def user_complex_type() -> Response:
+    """
+    :parameter query array[integer] a: b
+    :parameter query float b: c
+    :response 200 array[test.schema.UserSuccessResponse]: x
+    :return: flask.Response
+    """
+    return make_response('test')

@@ -1,8 +1,7 @@
 from flask import Flask
 from fss.parser import DocParser
 from fss.schema.rule import DocRuleType
-from test.endpoint import user_single_summary, user_multi_summary
-from test.schema import UserSuccessResponse, UserErrorResponse, UserModel
+from test.endpoint import user_complex_type, user_single_summary, user_multi_summary
 
 
 class TestDocParser:
@@ -53,12 +52,12 @@ class TestDocParser:
 
         assert schema.responses[0].kind == DocRuleType.RESPONSE
         assert schema.responses[0].status_code == 200
-        assert schema.responses[0].model == UserSuccessResponse
-        assert schema.responses[0].model_name == 'test.schema.UserSuccessResponse'
+        assert schema.responses[0].type_name == 'object'
+        assert schema.responses[0].type == 'test.schema.UserSuccessResponse'
         assert schema.responses[1].kind == DocRuleType.RESPONSE
         assert schema.responses[1].status_code == 403
-        assert schema.responses[1].model == UserErrorResponse
-        assert schema.responses[1].model_name == 'test.schema.UserErrorResponse'
+        assert schema.responses[1].type_name == 'object'
+        assert schema.responses[1].type == 'test.schema.UserErrorResponse'
 
     def test_simple_parameter(self):
         self.app.add_url_rule('/example', view_func=user_multi_summary, methods=['GET', 'HEAD'])
@@ -77,6 +76,27 @@ class TestDocParser:
         assert schema.parameters[1].name == 'user'
         assert schema.parameters[1].in_name == 'body'
         assert schema.parameters[1].type_name == 'object'
-        assert schema.parameters[1].type == UserModel
+        assert schema.parameters[1].type == 'test.schema.UserModel'
         assert schema.parameters[1].description == 'the user model'
+        assert schema.parameters[1].default is None
+
+    def test_complex_type(self):
+        self.app.add_url_rule('/example', view_func=user_complex_type, methods=['GET', 'HEAD'])
+
+        parser = DocParser(self.app, self.app.url_map._rules[1])
+        schema = parser.parse()
+
+        assert len(schema.parameters) == 2
+        assert schema.parameters[0].kind == DocRuleType.PARAMETER
+        assert schema.parameters[0].name == 'a'
+        assert schema.parameters[0].in_name == 'query'
+        assert schema.parameters[0].type_name == 'array'
+        assert schema.parameters[0].description == 'b'
+        assert schema.parameters[0].default is None
+        assert schema.parameters[1].kind == DocRuleType.PARAMETER
+        assert schema.parameters[1].name == 'b'
+        assert schema.parameters[1].in_name == 'query'
+        assert schema.parameters[1].type_name == 'float'
+        assert schema.parameters[1].type is None
+        assert schema.parameters[1].description == 'c'
         assert schema.parameters[1].default is None
