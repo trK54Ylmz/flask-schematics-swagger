@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Install dependencies
-        run: pip install schematics>=2.1.1 flask>=2.0.0 wtform>=2.2
+        run: pip install schematics>=2.1.1 flask>=2.0.0 wtforms>=2.2
       - name: Lint with flake8
         run: |
           pip install flake8

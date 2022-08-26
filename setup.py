@@ -22,7 +22,7 @@ setup(
     install_requires=[
         'schematics>=2.1.1',
         'flask>=2.0.0',
-        'wtform>=2.2',
+        'wtforms>=2.2',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
