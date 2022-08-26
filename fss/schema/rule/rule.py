@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from schematics import Model
+from schematics.types import StringType
 
 
-@dataclass
-class DocRuleSchema:
-    kind: str
+class DocRuleSchema(Model):
+    kind = StringType()

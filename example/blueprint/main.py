@@ -1,5 +1,5 @@
-from blueprint.app import app, fss
-from blueprint.user import user
+from example.blueprint.app import app, fss
+from example.blueprint.user import user
 
 app.register_blueprint(user, url_prefix='/user')
 

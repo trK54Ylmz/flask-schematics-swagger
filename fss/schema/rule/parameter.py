@@ -1,13 +1,11 @@
-from dataclasses import dataclass
-from typing import Any, Optional, Type
 from .rule import DocRuleSchema
+from schematics.types import BaseType, StringType
 
 
-@dataclass
 class DocParameterRuleSchema(DocRuleSchema):
-    in_name: str
-    type: Type
-    type_name: str
-    name: str
-    description: str
-    default: Optional[Any] = None
+    in_name = StringType()
+    type = StringType()
+    type_name = StringType()
+    name = StringType()
+    description = StringType()
+    default = BaseType(default=None)

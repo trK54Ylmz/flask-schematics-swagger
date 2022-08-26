@@ -1,7 +1,11 @@
+from .generator import Generator
 from .openapi import OpenApiGenerator
-from .schema import DocSchemaGeneator
+from .path import DocPathGeneator
+from .definition import DocDefinitionGeneator
 
 __all__ = [
-    'DocSchemaGeneator',
+    'Generator',
+    'DocPathGeneator',
+    'DocDefinitionGeneator',
     'OpenApiGenerator',
 ]

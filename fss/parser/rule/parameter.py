@@ -1,36 +1,16 @@
 import re
-from typing import Any
 
 from .parser import RuleParser
 from fss.exception import ParameterException
+from fss.schema import Schema
 from fss.schema.rule import DocParameterRuleSchema, DocRuleType
 
 
 class DocParameterRuleParser(RuleParser):
     prefix = 'parameter'
     allowed = ['query', 'header', 'body', 'path', 'formData']
-    primitives = ['string', 'float', 'integer', 'boolean']
-    pattern = r'^:parameter[\s]{1,}([a-zA-Z]+)[\s]{1,}([a-zA-Z\_\.]+)[\s]{1,}([a-zA-Z\_]+):(.*?)$'
+    pattern = r'^:parameter[\s]{1,}([a-z]+)[\s]{1,}([a-z\_\.\[\]]+)[\s]{1,}([a-z\_]+):(.*?)$'
     default = r'^(.*?)([\s]{1,}(default:[\s]{1,}(.*?)))?$'
-
-    def cast_default(self, value: str, type: str) -> Any:
-        """
-        Cast default type by given type definition
-
-        :param value: default value as string
-        :param type: expected default value type
-        :return: new default value in given type
-        """
-        if type == self.primitives[1]:
-            return float(value)
-
-        if type == self.primitives[2]:
-            return int(value)
-
-        if type == self.primitives[3]:
-            return value in ['true', 'True', '1']
-
-        return value
 
     def parse(self, definition: str) -> DocParameterRuleSchema:
         """
@@ -39,7 +19,7 @@ class DocParameterRuleParser(RuleParser):
         :param definition: raw function pydoc line
         :return: parameter definition schema
         """
-        match = re.match(self.pattern, definition)
+        match = re.match(self.pattern, definition, re.IGNORECASE)
 
         if not match:
             raise ParameterException(definition)
@@ -48,17 +28,21 @@ class DocParameterRuleParser(RuleParser):
         if in_name not in self.allowed:
             raise ParameterException(definition, parameter=in_name)
 
-        type_model = None
+        name = match.group(3).strip()
         type_definition = match.group(2).strip()
-        if type_definition in self.primitives:
+
+        type_model = None
+        if type_definition.lower() == 'none':
+            type_name = 'None'
+            type_model = None
+        elif type_definition in Schema.PRIMITIVES:
             type_name = type_definition
         elif type_definition.startswith('array[') and type_definition.endswith(']'):
             type_name = 'array'
-            length = len(type_definition)
-            type_model = self.load_class(type_definition[1:length - 1])
+            type_model = type_definition[6:-1]
         else:
             type_name = 'object'
-            type_model = self.load_class(type_definition)
+            type_model = type_definition
 
         default = None
         description = match.group(4).strip()
@@ -69,17 +53,18 @@ class DocParameterRuleParser(RuleParser):
                 description = default_match.group(1).strip()
                 if default_section.strip() == 'None':
                     default = 'null'
-                elif type_name in self.primitives:
+                elif type_name in Schema.PRIMITIVES:
                     default = self.cast_default(default_section, type_name)
                 else:
                     default = default_section
 
-        return DocParameterRuleSchema(
-            kind=DocRuleType.PARAMETER,
-            in_name=in_name,
-            type=type_model,
-            type_name=type_name,
-            description=description,
-            default=default,
-            name=match.group(3).strip(),
-        )
+        schema = DocParameterRuleSchema()
+        schema.kind = DocRuleType.PARAMETER
+        schema.name = name
+        schema.in_name = in_name
+        schema.type = type_model
+        schema.type_name = type_name
+        schema.description = description
+        schema.default = default
+
+        return schema

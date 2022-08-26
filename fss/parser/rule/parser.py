@@ -1,26 +1,31 @@
-import importlib
 from typing import Any, TypeVar
-from fss.schema.rule import DocRuleSchema
+
+from schematics import Model
+from fss.schema import Schema
 
 
-T = TypeVar('T', bound=DocRuleSchema)
+T = TypeVar('T', bound=Model)
 
 
 class RuleParser:
-    def load_class(self, path: str) -> Any:
+    def cast_default(self, value: str, type: str) -> Any:
         """
-        Load class type from string
+        Cast default type by given type definition
 
-        :param path: class path name
-        :return: class type
+        :param value: default value as string
+        :param type: expected default value type
+        :return: new default value in given type
         """
-        modules = path.split('.')
-        class_name = modules[-1]
-        module_name = '.'.join(modules[:-1])
+        if type == Schema.FLOAT:
+            return float(value)
 
-        module = importlib.import_module(module_name)
+        if type == Schema.INTEGER:
+            return int(value)
 
-        return getattr(module, class_name)
+        if type == Schema.BOOLEAN:
+            return value in ['true', 'True', '1']
+
+        return value
 
     def parse(self, definition: str) -> T:
         """

@@ -26,7 +26,7 @@ def get_users() -> dict:
     Get list of users
 
     :parameter query integer user_id: the user id filter. default: None
-    :response 200 schema.UserGetResponse:
+    :response 200 schema.user.UserGetResponse:
     :return: flask response as dictionary
     """
     user_id = request.args.get('user_id')

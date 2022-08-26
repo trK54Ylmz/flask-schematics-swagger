@@ -2,6 +2,7 @@ from json import JSONEncoder
 from typing import Any
 
 from schematics import Model
+from schematics.common import NONEMPTY
 
 
 class CustomEncoder(JSONEncoder):
@@ -13,5 +14,5 @@ class CustomEncoder(JSONEncoder):
         :return: serialized value
         """
         if isinstance(o, Model):
-            return o.to_native()
+            return o.to_native(export_level=NONEMPTY)
         return super().default(o)

@@ -1,9 +1,9 @@
 from flask import Flask, request
 from fss import FlaskSchematicsSwagger
-from schema import UserModel, UserGetResponse
+from example.schema import UserModel, UserGetResponse
 
 app = Flask('app')
-fss = FlaskSchematicsSwagger(app)
+fss = FlaskSchematicsSwagger(app, 'localhost', '1.0', 'simple', 'description', '/documentation')
 
 
 @app.get('/example')
@@ -12,7 +12,7 @@ def get_users() -> dict:
     Get list of users
 
     :parameter query integer user_id: the user id filter. default: None
-    :response 200 schema.UserGetResponse:
+    :response 200 schema.user.UserGetResponse:
     :return: flask response as dictionary
     """
     user_id = request.args.get('user_id')

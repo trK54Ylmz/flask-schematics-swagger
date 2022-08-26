@@ -1,14 +1,9 @@
-from dataclasses import dataclass
-from typing import TypeVar
 from .rule import DocRuleSchema
-from schematics import Model
-
-T = TypeVar('T', bound=Model)
+from schematics.types import IntType, StringType
 
 
-@dataclass
 class DocResponseRuleSchema(DocRuleSchema):
-    status_code: int
-    description: str
-    model_name: str
-    model: T
+    status_code = IntType()
+    description = StringType()
+    type = StringType()
+    type_name = StringType()

@@ -53,11 +53,11 @@ class TestDocParser:
         assert schema.responses[0].kind == DocRuleType.RESPONSE
         assert schema.responses[0].status_code == 200
         assert schema.responses[0].type_name == 'object'
-        assert schema.responses[0].type == 'test.schema.UserSuccessResponse'
+        assert schema.responses[0].type == 'test.schema.user.UserSuccessResponse'
         assert schema.responses[1].kind == DocRuleType.RESPONSE
         assert schema.responses[1].status_code == 403
         assert schema.responses[1].type_name == 'object'
-        assert schema.responses[1].type == 'test.schema.UserErrorResponse'
+        assert schema.responses[1].type == 'test.schema.user.UserErrorResponse'
 
     def test_simple_parameter(self):
         self.app.add_url_rule('/example', view_func=user_multi_summary, methods=['GET', 'HEAD'])
@@ -76,7 +76,7 @@ class TestDocParser:
         assert schema.parameters[1].name == 'user'
         assert schema.parameters[1].in_name == 'body'
         assert schema.parameters[1].type_name == 'object'
-        assert schema.parameters[1].type == 'test.schema.UserModel'
+        assert schema.parameters[1].type == 'test.schema.user.UserModel'
         assert schema.parameters[1].description == 'the user model'
         assert schema.parameters[1].default is None
 

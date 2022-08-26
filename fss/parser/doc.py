@@ -48,7 +48,11 @@ class DocParser:
 
         :return: endpoint schema definition, if exists
         """
-        doc = inspect.cleandoc(self.extract_doc())
+        doc = self.extract_doc()
+        if doc is None:
+            return None
+
+        doc = inspect.cleandoc(doc)
 
         lines = doc.splitlines()
         if len(lines) == 0:

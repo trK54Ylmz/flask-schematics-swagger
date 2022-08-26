@@ -1,7 +1,11 @@
 from schematics import Model
 from schematics.types import (
-    BooleanType, FloatType, IntType, ListType, ModelType, StringType
+    BooleanType, DictType, FloatType, IntType, ListType, ModelType, StringType
 )
+
+
+class StatusModel(Model):
+    status = BooleanType(required=True)
 
 
 class UserModel(Model):
@@ -10,6 +14,10 @@ class UserModel(Model):
     age = IntType()
     status = BooleanType()
     salary = FloatType()
+    titles = ListType(StringType)
+    model = ModelType(StatusModel)
+    stats = ListType(ModelType(StatusModel))
+    xyz = DictType(ModelType(StatusModel))
 
 
 class UserSuccessResponse(Model):

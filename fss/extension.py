@@ -2,6 +2,7 @@ from typing import Optional
 from flask import Flask
 from fss.parser import DocParser
 from fss.generator import OpenApiGenerator
+from fss.view import FlaskView
 
 
 class FlaskSchematicsSwagger:
@@ -10,6 +11,8 @@ class FlaskSchematicsSwagger:
         app: Flask,
         host: Optional[str] = None,
         version: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
         route: Optional[str] = None,
     ) -> None:
         """
@@ -21,19 +24,17 @@ class FlaskSchematicsSwagger:
         :param route: path for swagger documentation
         """
         self.app = app
-        self.host = host
-        self.version = version
         self.route = route or '/documentation'
+        self.openapi = OpenApiGenerator(host, version, title, description, self.route)
+        self.view = FlaskView(self.app, self.route, self.openapi)
 
     def add_route(self) -> None:
         """
         Parse documents and add routing on the flask route map
         """
-        openapi = OpenApiGenerator(self.host, self.version, self.route)
-
         for item in self.app.url_map.iter_rules():
             parser = DocParser(self.app, item)
 
-            openapi.add(parser)
+            self.openapi.add(parser)
 
-        openapi.generate()
+        self.view.register()
