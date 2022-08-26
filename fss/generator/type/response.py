@@ -1,5 +1,7 @@
-from typing import List, Tuple
+from datetime import datetime, date
+from typing import List, Optional, Tuple
 
+from .type import DocTypeGenerator
 from schematics import Model
 from schematics.types import BaseType, ModelType
 from fss.schema import Schema
@@ -8,7 +10,7 @@ from fss.schema.openapi.item import OpenApiItemSchema
 from fss.schema.openapi.schema import OpenApiSchemaSchema
 
 
-class DocTypeGenerator:
+class DocResponseTypeGenerator(DocTypeGenerator):
     def __init__(self, model: Model) -> None:
         """
         Create list of api model definitions
@@ -19,16 +21,7 @@ class DocTypeGenerator:
         self.name = self.get_name(self.model)
         self.models = []
 
-    def get_name(self, model: Model) -> str:
-        """
-        Get model name
-
-        :param model: api model
-        :return: model name
-        """
-        return model.__module__ + '.' + model.__name__
-
-    def get_type(self, type: BaseType) -> str:
+    def get_type(self, type: BaseType) -> Tuple[str, Optional[str]]:
         """
         Get OpenApi type name of model field
 
@@ -36,24 +29,30 @@ class DocTypeGenerator:
         :return: OpenApi type name
         """
         if type.native_type is str:
-            return Schema.STRING
+            return Schema.STRING, None
+
+        if type.native_type is datetime:
+            return Schema.STRING, Schema.DATETIME
+
+        if type.native_type is date:
+            return Schema.STRING, Schema.DATE
 
         if type.native_type is int:
-            return Schema.INTEGER
+            return Schema.INTEGER, None
 
         if type.native_type is float:
-            return Schema.NUMBER
+            return Schema.NUMBER, None
 
         if type.native_type is bool:
-            return Schema.BOOLEAN
+            return Schema.BOOLEAN, None
 
         if type.native_type is list:
-            return Schema.ARRAY
+            return Schema.ARRAY, None
 
         if type.native_type is dict:
-            return Schema.OBJECT
+            return Schema.OBJECT, None
 
-        return Schema.OBJECT
+        return Schema.OBJECT, None
 
     def get_model_type(self, field: BaseType) -> OpenApiItemSchema:
         """
@@ -62,7 +61,7 @@ class DocTypeGenerator:
         :param field: model field
         :return: OpenApi field definition
         """
-        generator = DocTypeGenerator(field.native_type)
+        generator = DocResponseTypeGenerator(field.native_type)
 
         items = generator.generate()
         if len(items) > 0:
@@ -81,8 +80,11 @@ class DocTypeGenerator:
         :param field: model field
         :return: model field reference
         """
+        type = self.get_type(field.field)
+
         compound = OpenApiItemSchema()
-        compound.ref = self.get_type(field.field)
+        compound.type = type[0]
+        compound.format = type[1]
 
         return compound
 
@@ -93,7 +95,7 @@ class DocTypeGenerator:
         :param field: model field
         :return: model reference
         """
-        generator = DocTypeGenerator(field.field.native_type)
+        generator = DocResponseTypeGenerator(field.field.native_type)
 
         items = generator.generate()
         if len(items) > 0:
@@ -101,8 +103,11 @@ class DocTypeGenerator:
                 self.models.append(item)
 
         if field.native_type is list:
+            type = self.get_type(field.field)
+
             compound = OpenApiItemSchema()
-            compound.type = self.get_type(field.field)
+            compound.type = type[0]
+            compound.format = type[1]
             compound.ref = '#/definitions/' + self.get_name(field.field.native_type)
         elif field.native_type is dict:
             compound = OpenApiItemSchema()
@@ -129,10 +134,14 @@ class DocTypeGenerator:
             if field.required:
                 required.append(name)
 
-            property.type = self.get_type(field)
+            type = self.get_type(field)
+            property.type = type[0]
+            property.format = type[1]
 
             if isinstance(field, ModelType):
-                property.items = self.get_model_type(field)
+                property = self.get_model_type(field)
+                property.type = type[0]
+                property.format = type[1]
             elif field.is_compound:
                 if field.field.is_compound:
                     property.items = self.get_object_type(field)

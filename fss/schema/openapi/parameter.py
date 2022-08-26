@@ -1,4 +1,4 @@
-from .item import OpenApiItemSchema
+from .schema import OpenApiSchemaSchema
 from schematics import Model
 from schematics.types import BooleanType, ModelType, StringType
 
@@ -9,4 +9,4 @@ class OpenApiParameterSchema(Model):
     required = BooleanType()
     type = StringType()
     in_name = StringType(serialized_name='in')
-    items = ModelType(OpenApiItemSchema)
+    schema = ModelType(OpenApiSchemaSchema)

@@ -5,6 +5,8 @@ from dataclasses import dataclass
 class Schema:
     PRIMITIVES = ['string', 'float', 'integer', 'boolean']
     STRING = 'string'
+    DATE = 'date'
+    DATETIME = 'datetime'
     FLOAT = 'float'
     INTEGER = 'integer'
     BOOLEAN = 'boolean'

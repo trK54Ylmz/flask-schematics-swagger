@@ -60,6 +60,12 @@ class DocPathGeneator:
         """
         responses = dict()
 
+        if len(self.schema.responses) == 0:
+            res = OpenApiResponseSchema()
+            res.description = 'no content'
+
+            responses[204] = res
+
         for response in self.schema.responses:
             res = OpenApiResponseSchema()
             res.description = response.description
@@ -81,18 +87,23 @@ class DocPathGeneator:
             param = OpenApiParameterSchema()
             param.name = parameter.name
             param.required = False
-            param.type = parameter.type_name
+            param.in_name = parameter.in_name
             param.description = parameter.description
 
             if parameter.type_name in ['array', 'object']:
-                item = OpenApiItemSchema()
-
+                item = OpenApiSchemaSchema()
                 if parameter.type in Schema.PRIMITIVES:
-                    item.type = parameter.type
+                    sub_type = OpenApiSchemaSchema()
+                    sub_type.type = parameter.type
+
+                    item.type = 'array'
+                    item.items = sub_type
                 else:
                     item.ref = '#/definitions/' + parameter.type
 
-                param.items = item
+                param.schema = item
+            else:
+                param.type = parameter.type_name
 
             parameters.append(param)
 

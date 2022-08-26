@@ -17,7 +17,7 @@ class UserModel(Model):
     titles = ListType(StringType)
     model = ModelType(StatusModel)
     stats = ListType(ModelType(StatusModel))
-    xyz = DictType(ModelType(StatusModel))
+    stats_dict = DictType(ModelType(StatusModel))
 
 
 class UserSuccessResponse(Model):

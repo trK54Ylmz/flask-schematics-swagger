@@ -50,7 +50,7 @@ class TestSchemaGenerator:
         output = json.dumps(schema, cls=CustomEncoder)
         schema = json.loads(output)
 
-        ref = '#/definitions/test.schema.user.UserSuccessResponse'
+        ref = '#/definitions/test.schema.response.UserSuccessResponse'
 
         assert '/example' in schema.keys()
         assert 'get' in schema['/example'].keys()
@@ -80,11 +80,12 @@ class TestSchemaGenerator:
         assert 'parameters' in schema['/example']['get'].keys()
 
         parameters = schema['/example']['get']['parameters']
+
         assert len(parameters) == 2
         assert parameters[0]['name'] == 'a'
         assert parameters[0]['description'] == 'b'
-        assert parameters[0]['type'] == 'array'
-        assert parameters[0]['items']['type'] == 'integer'
+        assert parameters[0]['schema']['type'] == 'array'
+        assert parameters[0]['schema']['items']['type'] == 'integer'
         assert parameters[1]['name'] == 'b'
         assert parameters[1]['description'] == 'c'
         assert parameters[1]['type'] == 'float'

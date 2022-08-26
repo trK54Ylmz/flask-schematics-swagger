@@ -30,11 +30,11 @@ class OpenApiGenerator:
         :param consumes: OpenApi default request body type
         """
         self.host = host
-        self.version = version
         self.route = route
-        self.title = title
-        self.description = description
         self.schemas: List[DocSchema] = []
+        self.version = version or '0.1'
+        self.title = title or 'api title'
+        self.description = description or 'api description'
         self.consumes = consumes or ['application/json']
         self.produces = produces or ['application/json']
 

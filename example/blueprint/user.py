@@ -14,7 +14,7 @@ def get_users() -> dict:
     Get list of users
 
     :parameter query integer user_id: the user id filter. default: None
-    :response 200 schema.user.UserGetResponse:
+    :response 200 example.schema.response.UserGetResponse:
     :return: flask response as dictionary
     """
     user_id = request.args.get('user_id')
@@ -39,8 +39,7 @@ def update_user() -> None:
 
     User more detailed description
 
-    :parameter query integer user_id: the user id filter. default: None
-    :parameter query string name: the user name.
+    :parameter body example.schema.request.UserForm user: the user id filter. default: None
     :response 200 None:
     """
     user_id = request.args.get('user_id')
