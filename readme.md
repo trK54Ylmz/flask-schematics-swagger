@@ -1,5 +1,7 @@
 ### Flask Schematics Swagger
 
+[![PR](https://github.com/trK54Ylmz/flask-schematics-swagger/actions/workflows/pr.yaml/badge.svg)](https://github.com/trK54Ylmz/flask-schematics-swagger/actions/workflows/pr.yaml)
+
 Flask Swagger generator for Schematics models.
 
 #### Install
