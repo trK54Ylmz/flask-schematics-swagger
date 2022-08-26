@@ -78,7 +78,9 @@ jobs:
       - name: Build package dist
         run: python setup.py bdist_wheel
       - name: Run pytest
-        run: python -m unittest test
+        run: |
+          pip install pytest
+          python -m pytest test
       - name: Upload package
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
