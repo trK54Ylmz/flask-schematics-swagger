@@ -2,6 +2,7 @@ import json
 from flask import Flask
 from fss.generator.openapi import OpenApiGenerator
 from fss.parser import DocParser
+from fss.security import SecurityDefinition
 from test.endpoint import user_complex_type, user_multi_summary
 from fss.util import CustomEncoder
 
@@ -90,3 +91,29 @@ class TestSchemaGenerator:
         assert parameters[1]['description'] == 'c'
         assert parameters[1]['type'] == 'float'
         assert 'types' not in parameters[1]
+
+    def test_security(self):
+        self.app.add_url_rule('/example', view_func=user_complex_type, methods=['GET', 'HEAD'])
+
+        security = SecurityDefinition('test')
+        security.api_key('header', 'X-Test')
+
+        parser = DocParser(self.app, self.app.url_map._rules[1])
+
+        openapi = OpenApiGenerator(security=security)
+        openapi.add(parser)
+
+        openapi = openapi.generate()
+
+        output = json.dumps(openapi, cls=CustomEncoder)
+        schema = json.loads(output)
+
+        assert 'security' in schema.keys()
+        assert len(schema['security']) > 0
+        assert 'test' in schema['security'][0].keys()
+
+        assert 'securityDefinitions' in schema.keys()
+        assert 'test' in schema['securityDefinitions'].keys()
+        assert schema['securityDefinitions']['test']['type'] == 'apiKey'
+        assert schema['securityDefinitions']['test']['name'] == 'X-Test'
+        assert schema['securityDefinitions']['test']['in'] == 'header'

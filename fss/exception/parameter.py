@@ -5,7 +5,7 @@ from .rule import RuleException
 class ParameterException(RuleException):
     parameter: Optional[str] = None
 
-    def __init__(self, definition: str, *args: object, parameter: Optional[str] = None) -> None:
+    def __init__(self, definition: str, parameter: Optional[str] = None, *args: object) -> None:
         self.parameter = parameter
 
         super().__init__(definition, *args)

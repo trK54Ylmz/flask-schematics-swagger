@@ -1,5 +1,14 @@
 from flask import Flask
-from fss import FlaskSchematicsSwagger
+from fss import FlaskSchematicsSwagger, SecurityDefinition
+
+host = 'localhost'
+version = '1.0'
+title = 'simple'
+description = 'description'
+path = '/documentation'
+
+security = SecurityDefinition('apikey')
+security.api_key('header', 'X-Test')
 
 app = Flask('app')
-fss = FlaskSchematicsSwagger(app, 'localhost', '1.0', 'simple', 'description', '/documentation')
+fss = FlaskSchematicsSwagger(app, host, version, title, description, path, security)

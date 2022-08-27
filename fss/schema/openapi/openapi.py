@@ -1,6 +1,7 @@
 from .definition import OpenApiDefinitionSchema
 from .info import OpenApiInfoSchema
 from .method import OpenApiMethodSchema
+from .security import OpenApiSecurityDefinitionSchema
 from schematics import Model
 from schematics.types import ModelType, ListType, DictType, StringType
 
@@ -12,3 +13,8 @@ class OpenApiSchema(Model):
     produces = ListType(StringType)
     paths = DictType(ModelType(OpenApiMethodSchema))
     definitions = DictType(ModelType(OpenApiDefinitionSchema))
+    security = ListType(DictType(ListType(StringType)))
+    security_definition = DictType(
+        ModelType(OpenApiSecurityDefinitionSchema),
+        serialized_name='securityDefinitions',
+    )

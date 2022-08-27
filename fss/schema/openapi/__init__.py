@@ -7,6 +7,7 @@ from .parameter import OpenApiParameterSchema
 from .response import OpenApiResponseSchema
 from .route import OpenApiRouteSchema
 from .schema import OpenApiSchemaSchema
+from .security import OpenApiSecurityDefinitionSchema
 
 __all__ = [
     'OpenApiDefinitionSchema',
@@ -18,4 +19,5 @@ __all__ = [
     'OpenApiResponseSchema',
     'OpenApiRouteSchema',
     'OpenApiSchemaSchema',
+    'OpenApiSecurityDefinitionSchema',
 ]

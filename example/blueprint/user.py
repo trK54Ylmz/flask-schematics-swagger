@@ -49,3 +49,5 @@ def update_user() -> None:
         if user_id is not None and user_id != item['id']:
             continue
         item['name'] = name
+
+    return '', 204
