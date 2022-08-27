@@ -5,7 +5,7 @@ from .path import DocPathGeneator
 from fss.parser import DocParser
 from fss.security import SecurityDefinition
 from fss.schema import DocSchema
-from fss.schema.openapi import OpenApiSchema, OpenApiInfoSchema, OpenApiSecurityDefinitionSchema
+from fss.schema.openapi import OpenApiSchema, OpenApiInfoSchema
 
 
 class OpenApiGenerator:
