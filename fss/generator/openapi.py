@@ -3,6 +3,7 @@ from typing import List, Optional
 from .definition import DocDefinitionGeneator
 from .path import DocPathGeneator
 from fss.parser import DocParser
+from fss.security import SecurityDefinition
 from fss.schema import DocSchema
 from fss.schema.openapi import OpenApiSchema, OpenApiInfoSchema
 
@@ -14,6 +15,7 @@ class OpenApiGenerator:
         version: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
+        security: Optional[SecurityDefinition] = None,
         route: Optional[str] = None,
         produces: Optional[List[str]] = None,
         consumes: Optional[List[str]] = None,
@@ -25,12 +27,14 @@ class OpenApiGenerator:
         :param version: api version
         :param route: request base path
         :param title: OpenApi definition title
+        :param security: OpenApi security definition
         :param description: OpenApi definition description
         :param produces: OpenApi default response body type
         :param consumes: OpenApi default request body type
         """
         self.host = host
         self.route = route
+        self.security = security
         self.schemas: List[DocSchema] = []
         self.version = version or '0.1'
         self.title = title or 'api title'
@@ -67,6 +71,12 @@ class OpenApiGenerator:
         schema.info = info
         schema.paths = dict()
         schema.definitions = dict()
+
+        if self.security is not None:
+            schema.security = [dict()]
+            schema.security[0][self.security.name] = ['']
+            schema.security_definition = dict()
+            schema.security_definition[self.security.name] = self.security.schema
 
         for s in self.schemas:
             generator = DocDefinitionGeneator(s)

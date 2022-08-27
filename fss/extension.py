@@ -1,3 +1,4 @@
+from .security import SecurityDefinition
 from typing import Optional
 from flask import Flask
 from fss.parser import DocParser
@@ -14,6 +15,7 @@ class FlaskSchematicsSwagger:
         title: Optional[str] = None,
         description: Optional[str] = None,
         route: Optional[str] = None,
+        security: Optional[SecurityDefinition] = None,
     ) -> None:
         """
         Initialize swagger documentation for Flask with Schematics
@@ -25,7 +27,7 @@ class FlaskSchematicsSwagger:
         """
         self.app = app
         self.route = route or '/documentation'
-        self.openapi = OpenApiGenerator(host, version, title, description, self.route)
+        self.openapi = OpenApiGenerator(host, version, title, description, security, self.route)
         self.view = FlaskView(self.app, self.route, self.openapi)
 
     def add_route(self) -> None:
