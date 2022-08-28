@@ -9,14 +9,14 @@ except Exception:
 
 setup(
     name='flask-schematics-swagger',
-    version='0.0.3',
+    version='0.0.4',
     author='Tarik Yilmaz',
     author_email='tarikyilmaz.54@gmail.com',
     description=description,
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/trk54ylmz/flask-schematics-swagger',
-    packages=find_packages(exclude=['example*', 'test*', 'fss.static*']),
+    packages=find_packages(exclude=['example*', 'test*']),
     include_package_data=True,
     python_requires='>=3.7',
     install_requires=[

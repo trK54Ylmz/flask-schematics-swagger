@@ -18,8 +18,8 @@ class FlaskView:
         """
         self.app = app
         self.openapi = openapi
-        self.route = '/' + base.strip('/') + '/' + route.strip('/')
         self.current = Path(__file__).parent.parent.absolute()
+        self.route = f'/{base}/{route}/'.replace('//', '/')
 
     def html(self) -> Response:
         """
