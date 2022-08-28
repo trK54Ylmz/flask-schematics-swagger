@@ -11,6 +11,7 @@ from fss.schema.openapi import OpenApiSchema, OpenApiInfoSchema
 class OpenApiGenerator:
     def __init__(
         self,
+        base: Optional[str] = None,
         host: Optional[str] = None,
         version: Optional[str] = None,
         title: Optional[str] = None,
@@ -23,6 +24,7 @@ class OpenApiGenerator:
         """
         OpenApi generator by info parameters
 
+        :param base: api base path
         :param host: api host name
         :param version: api version
         :param route: request base path
@@ -32,6 +34,7 @@ class OpenApiGenerator:
         :param produces: OpenApi default response body type
         :param consumes: OpenApi default request body type
         """
+        self.base = base
         self.host = host
         self.route = route
         self.security = security
@@ -66,6 +69,7 @@ class OpenApiGenerator:
         info.description = self.description
 
         schema = OpenApiSchema()
+        schema.base_path = self.base
         schema.consumes = self.consumes
         schema.produces = self.produces
         schema.info = info

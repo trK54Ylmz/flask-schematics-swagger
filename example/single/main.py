@@ -3,16 +3,16 @@ from fss import FlaskSchematicsSwagger
 from example.schema import UserModel, UserGetResponse
 
 app = Flask('app')
-fss = FlaskSchematicsSwagger(app, 'localhost', '1.0', 'simple', 'description', '/documentation')
+fss = FlaskSchematicsSwagger(app, 'localhost', '1.0', 'simple', 'description', '/api/v1', '/doc')
 
 
-@app.get('/example')
+@app.get('/api/v1/example')
 def get_users() -> dict:
     """
     Get list of users
 
     :parameter query integer user_id: the user id filter. default: None
-    :response 200 schema.user.UserGetResponse:
+    :response 200 example.schema.response.UserGetResponse:
     :return: flask response as dictionary
     """
     user_id = request.args.get('user_id')

@@ -36,6 +36,14 @@ class TestDocParser:
 
         assert schema.description == 'Z'
 
+    def test_url_prefix(self):
+        self.app.add_url_rule('/a/b/c/a', view_func=user_single_summary, methods=['GET', 'HEAD'])
+
+        parser = DocParser(self.app, self.app.url_map._rules[1], '/a/b')
+        schema = parser.parse()
+
+        assert schema.url == '/c/a'
+
     def test_multi_line_description(self):
         self.app.add_url_rule('/example', view_func=user_multi_summary, methods=['GET', 'HEAD'])
 
