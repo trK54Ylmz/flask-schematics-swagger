@@ -7,15 +7,17 @@ from werkzeug.routing import Rule
 
 
 class DocParser:
-    def __init__(self, app: Flask, rule: Rule) -> None:
+    def __init__(self, app: Flask, rule: Rule, base: Optional[str] = None) -> None:
         """
         Parses and generates document schema function definition
 
         :param app: flask app
         :param rule: flask endpoint rule
+        :param base: flask base api route
         """
         self.app = app
         self.rule = rule
+        self.base = base
 
     def extract_doc(self) -> str:
         '''
@@ -58,9 +60,9 @@ class DocParser:
         if len(lines) == 0:
             return None
 
-        url = self.rule.rule
         name = self.rule.endpoint
         method = self.extract_method(self.rule.methods)
+        url = '/' + self.rule.rule.lstrip(self.base or '/')
 
         schema = DocSchema(name, url, method, doc)
 

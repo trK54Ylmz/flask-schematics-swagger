@@ -14,6 +14,7 @@ class FlaskSchematicsSwagger:
         version: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
+        base: Optional[str] = None,
         route: Optional[str] = None,
         security: Optional[SecurityDefinition] = None,
     ) -> None:
@@ -23,19 +24,25 @@ class FlaskSchematicsSwagger:
         :param app: flask app
         :param host: host name with or without port
         :param version: api version
+        :param base: flask base app route
         :param route: path for swagger documentation
+        :param security: api security definition
         """
+        route = route or '/documentation'
+        base = base or '/'
+
         self.app = app
-        self.route = route or '/documentation'
-        self.openapi = OpenApiGenerator(host, version, title, description, security, self.route)
-        self.view = FlaskView(self.app, self.route, self.openapi)
+        self.base = base
+        self.route = route
+        self.openapi = OpenApiGenerator(base, host, version, title, description, security, route)
+        self.view = FlaskView(self.app, self.route, self.base, self.openapi)
 
     def add_route(self) -> None:
         """
         Parse documents and add routing on the flask route map
         """
         for item in self.app.url_map.iter_rules():
-            parser = DocParser(self.app, item)
+            parser = DocParser(self.app, item, self.base)
 
             self.openapi.add(parser)
 

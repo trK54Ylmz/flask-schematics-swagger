@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Optional
 
 from flask import Flask, Response, make_response, render_template_string, send_from_directory
 from fss.generator import OpenApiGenerator
@@ -7,31 +8,38 @@ from fss.util import CustomEncoder
 
 
 class FlaskView:
-    def __init__(self, app: Flask, route: str, openapi: OpenApiGenerator) -> None:
+    def __init__(self, app: Flask, route: str, base: str, openapi: OpenApiGenerator) -> None:
         """
         Create and register flask routes for Swagger UI
 
         :param app: active flask app
+        :param base: api base route
         :param route: base route name for Swagger UI
         """
         self.app = app
         self.openapi = openapi
-        self.route = '/' + route.strip('/')
+        self.route = '/' + base.strip('/') + '/' + route.strip('/')
         self.current = Path(__file__).parent.parent.absolute()
 
-    def static(self, name: str) -> Response:
+    def html(self) -> Response:
+        """
+        Returns Swagger UI html file(s)
+
+        :param name: requested html file
+        :return: swagger html file as response
+        """
+        path = self.route + '/swagger.json'
+        content = self.current / 'static' / 'index.html'
+
+        return render_template_string(content.read_text(encoding='utf-8'), url=str(path))
+
+    def static(self, name: Optional[str] = None) -> Response:
         """
         Returns Swagger UI static files
 
         :param name: request swagger file
         :return: swagger file as response
         """
-        if name in ['', 'index.html']:
-            path = self.route + '/swagger.json'
-            content = self.current / 'static' / 'index.html'
-
-            return render_template_string(content.read_text(encoding='utf-8'), url=str(path))
-
         return send_from_directory(self.current / 'static', name)
 
     def swagger(self) -> Response:
@@ -52,5 +60,6 @@ class FlaskView:
         """
         Register flask routes for Swagger UI and yaml file
         """
+        self.app.add_url_rule(self.route + '/', 'fss_html', self.html)
         self.app.add_url_rule(self.route + '/<name>', 'fss_static', self.static)
         self.app.add_url_rule(self.route + '/swagger.json', 'fss_swagger', self.swagger)

@@ -12,6 +12,7 @@ class OpenApiSchema(Model):
     consumes = ListType(StringType)
     produces = ListType(StringType)
     paths = DictType(ModelType(OpenApiMethodSchema))
+    base_path = StringType(serialized_name='basePath')
     definitions = DictType(ModelType(OpenApiDefinitionSchema))
     security = ListType(DictType(ListType(StringType)))
     security_definition = DictType(
