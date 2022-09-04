@@ -1,7 +1,7 @@
 from flask import Flask
 from fss.parser import DocParser
 from fss.schema.rule import DocRuleType
-from test.endpoint import user_complex_type, user_single_summary, user_multi_summary
+from test.endpoint import user_complex_type, user_single_summary, user_multi_summary, user_with_tag
 
 
 class TestDocParser:
@@ -108,3 +108,11 @@ class TestDocParser:
         assert schema.parameters[1].type is None
         assert schema.parameters[1].description == 'c'
         assert schema.parameters[1].default is None
+
+    def test_user_with_tag(self):
+        self.app.add_url_rule('/example', view_func=user_with_tag, methods=['GET', 'HEAD'])
+
+        parser = DocParser(self.app, self.app.url_map._rules[1])
+        schema = parser.parse()
+
+        assert schema.tag == 'user'

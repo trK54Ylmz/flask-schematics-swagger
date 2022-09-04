@@ -121,6 +121,7 @@ class DocPathGeneator:
         route.description = self.schema.description
         route.parameters = self.get_parameters()
         route.responses = self.get_responses()
+        route.tags = None if self.schema.tag is None else [self.schema.tag]
 
         return route
 
@@ -137,6 +138,8 @@ class DocPathGeneator:
             method.get_method = self.generate_model()
         elif method_name == Method.POST:
             method.post_method = self.generate_model()
+        elif method_name == Method.PATCH:
+            method.patch_method = self.generate_model()
         elif method_name == Method.DELETE:
             method.delete_method = self.generate_model()
 

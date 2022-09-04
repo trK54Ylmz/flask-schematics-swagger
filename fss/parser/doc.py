@@ -41,6 +41,8 @@ class DocParser:
                 return 'POST'
             if 'DELETE' in methods:
                 return 'DELETE'
+            if 'PATCH' in methods:
+                return 'PATCH'
 
         return 'GET'
 

@@ -39,3 +39,18 @@ def user_complex_type() -> Response:
     :return: flask.Response
     """
     return make_response('test')
+
+
+def user_with_tag() -> Response:
+    """
+    A
+
+    B
+
+    :tag: user
+    :parameter query integer a: b
+    :parameter query float b: c
+    :response 200 test.schema.response.UserSuccessResponse: d
+    :return: flask.Response
+    """
+    return make_response('test')

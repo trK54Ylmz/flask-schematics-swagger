@@ -69,12 +69,13 @@ class OpenApiGenerator:
         info.description = self.description
 
         schema = OpenApiSchema()
-        schema.base_path = self.base
-        schema.consumes = self.consumes
-        schema.produces = self.produces
+        schema.tags = []
         schema.info = info
         schema.paths = dict()
         schema.definitions = dict()
+        schema.base_path = self.base
+        schema.consumes = self.consumes
+        schema.produces = self.produces
 
         if self.security is not None:
             schema.security = [dict()]
@@ -93,5 +94,8 @@ class OpenApiGenerator:
             path = generator.generate()
 
             schema.paths[s.url] = path
+
+            if s.tag is not None:
+                schema.tags.append(s.tag)
 
         return schema

@@ -3,7 +3,7 @@ from flask import Flask
 from fss.generator.openapi import OpenApiGenerator
 from fss.parser import DocParser
 from fss.security import SecurityDefinition
-from test.endpoint import user_complex_type, user_multi_summary
+from test.endpoint import user_complex_type, user_multi_summary, user_with_tag
 from fss.util import CustomEncoder
 
 
@@ -15,7 +15,7 @@ class TestSchemaGenerator:
     def teardown_method(self, _):
         self.app = None
 
-    def test_simple_response(self):
+    def test_multi_response(self):
         self.app.add_url_rule('/example', view_func=user_multi_summary, methods=['GET', 'HEAD'])
 
         parser = DocParser(self.app, self.app.url_map._rules[1])
@@ -117,3 +117,25 @@ class TestSchemaGenerator:
         assert schema['securityDefinitions']['test']['type'] == 'apiKey'
         assert schema['securityDefinitions']['test']['name'] == 'X-Test'
         assert schema['securityDefinitions']['test']['in'] == 'header'
+
+    def test_tag_list(self):
+        self.app.add_url_rule('/example', view_func=user_with_tag, methods=['GET', 'HEAD'])
+
+        parser = DocParser(self.app, self.app.url_map._rules[1])
+
+        openapi = OpenApiGenerator()
+        openapi.add(parser)
+
+        openapi = openapi.generate()
+
+        output = json.dumps(openapi, cls=CustomEncoder)
+        schema = json.loads(output)
+
+        assert 'tags' in schema
+        assert schema['tags'] == ['user']
+
+        assert 'paths' in schema.keys()
+        assert '/example' in schema['paths'].keys()
+        assert 'get' in schema['paths']['/example'].keys()
+        assert 'tags' in schema['paths']['/example']['get'].keys()
+        assert schema['paths']['/example']['get']['tags'] == ['user']
