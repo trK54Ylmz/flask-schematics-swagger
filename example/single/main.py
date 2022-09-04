@@ -1,9 +1,17 @@
 from flask import Flask, request
-from fss import FlaskSchematicsSwagger
+from fss import FlaskSchematicsSwagger, SecurityDefinition
 from example.schema import UserModel, UserGetResponse
 
+host = 'localhost'
+version = '1.0'
+title = 'simple'
+description = 'description'
+base = '/api/v1'
+route = '/doc'
+
 app = Flask('app')
-fss = FlaskSchematicsSwagger(app, 'localhost', '1.0', 'simple', 'description', '/api/v1', '/doc')
+sec = SecurityDefinition('basic_auth').basic()
+fss = FlaskSchematicsSwagger(app, host, version, title, description, sec, base, route)
 
 
 @app.get('/api/v1/example')

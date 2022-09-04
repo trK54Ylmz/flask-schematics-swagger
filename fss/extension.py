@@ -14,9 +14,9 @@ class FlaskSchematicsSwagger:
         version: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
+        security: Optional[SecurityDefinition] = None,
         base: Optional[str] = None,
         route: Optional[str] = None,
-        security: Optional[SecurityDefinition] = None,
     ) -> None:
         """
         Initialize swagger documentation for Flask with Schematics
@@ -24,9 +24,9 @@ class FlaskSchematicsSwagger:
         :param app: flask app
         :param host: host name with or without port
         :param version: api version
+        :param security: api security definition
         :param base: flask base app route
         :param route: path for swagger documentation
-        :param security: api security definition
         """
         route = route or '/documentation'
         base = base or '/'

@@ -1,6 +1,7 @@
 from typing import List, Optional
-from fss.schema.rule import DocParameterRuleSchema, DocResponseRuleSchema
-from fss.schema.rule.rule import DocRuleSchema
+from fss.schema.rule import (
+    DocParameterRuleSchema, DocResponseRuleSchema, DocRuleSchema, DocTagRuleSchema
+)
 
 
 class DocSchema:
@@ -8,6 +9,7 @@ class DocSchema:
     url: str
     method: str
     name: str
+    tag: Optional[str] = None
     summary: Optional[str] = None
     description: Optional[str] = None
     parameters: List[DocParameterRuleSchema] = []
@@ -25,6 +27,14 @@ class DocSchema:
         self.method = method
         self.responses = []
         self.parameters = []
+
+    def add_tag(self, rule: DocTagRuleSchema) -> None:
+        """
+        Add tag definition for the endpoint
+
+        :param rule: tag definition
+        """
+        self.tag = rule.name
 
     def add_parameter(self, rule: DocParameterRuleSchema) -> None:
         """
@@ -50,5 +60,7 @@ class DocSchema:
         """
         if isinstance(rule, DocParameterRuleSchema):
             self.add_parameter(rule)
+        elif isinstance(rule, DocTagRuleSchema):
+            self.add_tag(rule)
         else:
             self.add_response(rule)

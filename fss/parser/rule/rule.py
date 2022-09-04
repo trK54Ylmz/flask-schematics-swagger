@@ -1,8 +1,9 @@
 from typing import Optional, TypeVar
 
-from fss.exception.rule import RuleException
-from fss.parser.rule.parameter import DocParameterRuleParser
+from .parameter import DocParameterRuleParser
 from .response import DocResponseRuleParser
+from .tag import DocTagRuleParser
+from fss.exception.rule import RuleException
 from fss.schema.rule import DocRuleSchema
 
 T = TypeVar('T', bound=DocRuleSchema)
@@ -17,10 +18,10 @@ class DocRuleParser:
 
     def parse(self, definition: str) -> Optional[T]:
         """
-        Parse parameter or response definition in function pydoc
+        Parse parameter or response or tag definition in function pydoc
 
         :param definition: raw function pydoc line
-        :return: parameter or response definition schema
+        :return: parameter or response or tag definition schema
         """
         for invalid in self.invalid_definitions:
             if definition.startswith(invalid):
@@ -30,6 +31,8 @@ class DocRuleParser:
             parser = DocResponseRuleParser()
         elif definition.startswith(':' + DocParameterRuleParser.prefix):
             parser = DocParameterRuleParser()
+        elif definition.startswith(':' + DocTagRuleParser.prefix):
+            parser = DocTagRuleParser()
         else:
             raise RuleException(definition)
         return parser.parse(definition)

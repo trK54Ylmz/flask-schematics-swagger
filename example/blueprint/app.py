@@ -5,10 +5,9 @@ host = 'localhost'
 version = '1.0'
 title = 'simple'
 description = 'description'
-path = '/documentation'
 
 security = SecurityDefinition('apikey')
 security.api_key('header', 'X-Test')
 
 app = Flask('app')
-fss = FlaskSchematicsSwagger(app, host, version, title, description, path, security)
+fss = FlaskSchematicsSwagger(app, host, version, title, description, security)

@@ -1,3 +1,5 @@
+from typing_extensions import Self
+
 from fss.exception import ParameterException
 from fss.schema.openapi import OpenApiSecurityDefinitionSchema
 
@@ -12,7 +14,7 @@ class SecurityDefinition:
         self.name = name
         self.schema = None
 
-    def basic(self) -> None:
+    def basic(self) -> Self:
         """
         Create basic authntication definition
         """
@@ -21,7 +23,9 @@ class SecurityDefinition:
 
         self.schema = schema
 
-    def api_key(self, in_name: str, name: str) -> None:
+        return self
+
+    def api_key(self, in_name: str, name: str) -> Self:
         """
         Create api key security definition
         """
@@ -34,6 +38,8 @@ class SecurityDefinition:
         schema.in_name = in_name
 
         self.schema = schema
+
+        return self
 
     def oauth2(self) -> None:
         raise Exception('Not supported yet.')

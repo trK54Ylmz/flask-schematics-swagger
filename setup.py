@@ -9,7 +9,7 @@ except Exception:
 
 setup(
     name='flask-schematics-swagger',
-    version='0.0.5',
+    version='0.0.6',
     author='Tarik Yilmaz',
     author_email='tarikyilmaz.54@gmail.com',
     description=description,
@@ -23,6 +23,7 @@ setup(
         'schematics>=2.1.1',
         'flask>=2.0.0',
         'wtforms>=2.2',
+        'typing-extensions>=3.7.4.3'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

@@ -11,6 +11,7 @@ class OpenApiSchema(Model):
     swagger = StringType(default='2.0')
     consumes = ListType(StringType)
     produces = ListType(StringType)
+    tags = ListType(StringType)
     paths = DictType(ModelType(OpenApiMethodSchema))
     base_path = StringType(serialized_name='basePath')
     definitions = DictType(ModelType(OpenApiDefinitionSchema))

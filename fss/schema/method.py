@@ -5,4 +5,5 @@ from dataclasses import dataclass
 class Method:
     GET = 'get'
     POST = 'post'
+    PATCH = 'path'
     DELETE = 'delete'
